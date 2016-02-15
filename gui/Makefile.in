@@ -17,7 +17,7 @@ LDFLAGS = @LDFLAGS@
 %.o: %.cc
 	@CXX@ -Wall -D"DESTDIR=\"@prefix@\"" ${TIMESTAMP} ${CFLAGS} -c -o $@ $<
 
-main.o: $(OBJS) Makefile
+main.o: Makefile
 
 xcadabra: $(OBJS)
 	@CXX@ -o xcadabra $+ ${LDFLAGS} `pkg-config modglue --libs` `pkg-config --libs gtkmm-2.4` -lpcrecpp
