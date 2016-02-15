@@ -8,26 +8,27 @@ all: xcadabra
 static: xcadabra_static
 
 OBJS   = help.o widgets.o window.o main.o ../src/stopwatch.o
-CFLAGS = -O2 -I. -I@top_srcdir@/include `pkg-config modglue --cflags` `pkg-config --cflags gtkmm-2.4` \
+CFLAGS = @CFLAGS@ -O2 -I. -I@top_srcdir@/include `pkg-config modglue --cflags` `pkg-config --cflags gtkmm-2.4` \
          `pkg-config --cflags pango`
 SRCS   = `find . -name "*.cc"`
 TIMESTAMP = -D"RELEASE=\"${RELEASE}\"" -D"DATETIME=\"`date | sed -e 's/  / /'`\"" -DHOSTNAME=\"`hostname`\"
+LDFLAGS = @LDFLAGS@
 
 %.o: %.cc
-	@CXX@ -Wall @CFLAGS@ -D"DESTDIR=\"@prefix@\"" ${TIMESTAMP} ${CFLAGS} -c -o $@ $<
+	@CXX@ -Wall -D"DESTDIR=\"@prefix@\"" ${TIMESTAMP} ${CFLAGS} -c -o $@ $<
 
 main.o: $(OBJS) Makefile
 
 xcadabra: $(OBJS)
-	@CXX@ -o xcadabra $+ `pkg-config modglue --libs` `pkg-config --libs gtkmm-2.4` -lpcrecpp
+	@CXX@ -o xcadabra $+ ${LDFLAGS} `pkg-config modglue --libs` `pkg-config --libs gtkmm-2.4` -lpcrecpp
 
 xcadabra_static: $(OBJS)
-	@CXX@ -o xcadabra -static $+  -L@prefix@/lib `pkg-config modglue --libs` \
+	@CXX@ -o xcadabra -static $+ ${LDFLAGS} -L@prefix@/lib `pkg-config modglue --libs` \
                     `pkg-config --libs gtkmm-2.4` `pkg-config libxml++-2.6` \
                     -lpthread -lexpat
 
 test_texit: texit.o test_texit.o
-	@CXX@ -o test_texit `pkg-config modglue --libs` `pkg-config --libs gtkmm-2.4` $+ 
+	@CXX@ -o test_texit ${LDFLAGS} `pkg-config modglue --libs` `pkg-config --libs gtkmm-2.4` $+ 
 
 install:
 ifeq ($(strip $(MACTEST)),)
