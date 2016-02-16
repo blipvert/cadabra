@@ -66,6 +66,13 @@ int main (int argc, char *argv[])
 	oldpath=std::string(DESTDIR)+std::string("/share/texmf/tex/latex/cadabra:")+oldpath;
 	setenv("TEXINPUTS", oldpath.c_str(), 1);
 
+        char *oldp = getenv("PATH");
+        if (oldp)
+                oldpath = std::string(DESTDIR)+std::string("/bin:")+std::string(oldp);
+        else
+                oldpath = std::string(DESTDIR)+std::string("/bin");
+        setenv("PATH",oldpath.c_str(), 1);
+
 	// Ensure correct installation.
 //	if(!verify_breqn_tableaux_presence())
 //		return -1;
